@@ -12,12 +12,24 @@ public class GameManager : MonoBehaviour
     public bool isGameOver;
 
     private int numberOfBomb;
+    private int countFlagSetted;
     private int countSquareOpened;
 
     public SquareClose squareClose;
     private SquareClose[,] arraySquareClose;
     public SquareOpen squareOpen;
     private SquareOpen[,] arraySquareOpen;
+
+
+    [SerializeField]
+    private TimeBoard timeBoard;
+    [SerializeField]
+    private NumberTwoUnit highScore;
+    [SerializeField]
+    private NumberTwoUnit countFlag;
+    [SerializeField]
+    private NumberTwoUnit maxBomb;
+
 
     private int[,] around = new int[,] {
             {0,1},
@@ -32,21 +44,25 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        height = 20;
+        width = 20;
+        arraySquareClose = new SquareClose[width, height];
+        arraySquareOpen = new SquareOpen[width, height];
         Reset();
     }
 
     public void Reset()
     {
+        timeBoard.Reset();
+        countFlag.SetNumber(0);
         isGameOver = false;
         startPos = new Vector3(-4, 3);
         countSquareOpened = 0;
         numberOfBomb = 40;
+        countFlagSetted = 0;
+        maxBomb.SetNumber(numberOfBomb);
 
-        height = 20;
-        width = 20;
 
-        arraySquareClose = new SquareClose[width, height];
-        arraySquareOpen = new SquareOpen[width, height];
 
         InitMapSquare();
     }
@@ -58,14 +74,12 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < width; j++)
             {
-
-
                 pos = new Vector3(pos.x + w, pos.y, 0);
 
                 if (arraySquareClose[i, j] != null)
-                   Destroy(arraySquareClose[i, j]);
+                    Destroy(arraySquareClose[i, j].gameObject);
                 if (arraySquareOpen[i, j] != null)
-                    Destroy(arraySquareOpen[i, j]);
+                    Destroy(arraySquareOpen[i, j].gameObject);
 
                 SquareOpen tmpSquareOpen = Instantiate(squareOpen, pos, Quaternion.identity);
                 tmpSquareOpen.SetPosXY(new Vector2Int(i, j));
@@ -97,6 +111,7 @@ public class GameManager : MonoBehaviour
     }
     void InitMapBomb(Vector2 posExceptBomb)
     {
+        timeBoard.Begin(99);
         int countBomb = 0;
         while (countBomb < numberOfBomb)
         {
@@ -106,7 +121,7 @@ public class GameManager : MonoBehaviour
             {
                 countBomb++;
                 arraySquareOpen[x, y].SetCountBomb(-1);
-               // Debug.Log(x + " " + y);
+                // Debug.Log(x + " " + y);
             }
         }
     }
@@ -120,7 +135,7 @@ public class GameManager : MonoBehaviour
             if (i + around[k, 0] >= 0 && j + around[k, 1] >= 0 && i + around[k, 0] < height && j + around[k, 1] < width && arraySquareClose[i + around[k, 0], j + around[k, 1]].GetState() == 1)
                 countFlag++;
 
-        if (countFlag == arraySquareOpen[i,j].GetCountBomb())
+        if (countFlag == arraySquareOpen[i, j].GetCountBomb())
         {
             for (int k = 0; k < 8; k++)
                 if (i + around[k, 0] >= 0 && j + around[k, 1] >= 0 && i + around[k, 0] < height && j + around[k, 1] < width && arraySquareClose[i + around[k, 0], j + around[k, 1]].GetState() == 0)
@@ -131,13 +146,13 @@ public class GameManager : MonoBehaviour
     {
         int i = posSquare.x;
         int j = posSquare.y;
-        if (arraySquareOpen[i, j].GetStateOpened()||isGameOver)
+        if (arraySquareOpen[i, j].GetStateOpened() || isGameOver)
             return;
 
 
         arraySquareOpen[i, j].Open();
         arraySquareClose[i, j].Open();
-        if (arraySquareOpen[i,j].GetCountBomb()==-1)
+        if (arraySquareOpen[i, j].GetCountBomb() == -1)
         {
             arraySquareOpen[i, j].SetCountBomb(-3);
             GameOver();
@@ -155,7 +170,7 @@ public class GameManager : MonoBehaviour
         {
             for (int k = 0; k < 8; k++)
                 if (i + around[k, 0] >= 0 && j + around[k, 1] >= 0 && i + around[k, 0] < height && j + around[k, 1] < width)
-                    OpenSquare(new Vector2Int(i+around[k,0],j+around[k,1]));
+                    OpenSquare(new Vector2Int(i + around[k, 0], j + around[k, 1]));
         }
     }
 
@@ -167,16 +182,31 @@ public class GameManager : MonoBehaviour
     void GameOver()
     {
         isGameOver = true;
-        for (int i= 0; i < height; i++)
-            for (int j= 0; j < width; j++)
+        for (int i = 0; i < height; i++)
+            for (int j = 0; j < width; j++)
             {
-                if (arraySquareClose[i, j]!=null)
-                    arraySquareClose[i,j].Open();
-                if (arraySquareClose[i,j].GetState()==1 && arraySquareOpen[i,j].GetCountBomb()!=-1)
+                if (arraySquareClose[i, j] != null)
+                    arraySquareClose[i, j].Open();
+                if (arraySquareClose[i, j].GetState() == 1 && arraySquareOpen[i, j].GetCountBomb() != -1)
                 {
                     arraySquareOpen[i, j].SetCountBomb(-2);
                 }
             }
+    }
+    public bool SetFlag()
+    {
+       if (countFlagSetted<numberOfBomb)
+        {
+            countFlagSetted++;
+            countFlag.Increase();
+            return true;
+        }
+        return false;
+    }
+    public void UnSetFlag()
+    {
+        countFlagSetted--;
+        countFlag.Decrease();
     }
     void Update()
     {

@@ -59,8 +59,11 @@
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\SquareClose.cs" />
     <Compile Include="Assets\Scripts\SquareOpen.cs" />
-    <Compile Include="Assets\Scripts\Square.cs" />
     <Compile Include="Assets\Scripts\Icon.cs" />
+    <Compile Include="Assets\Scripts\Square.cs" />
+    <Compile Include="Assets\Scripts\Number.cs" />
+    <Compile Include="Assets\Scripts\NumberTwoUnit.cs" />
+    <Compile Include="Assets\Scripts\TimeBoard.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

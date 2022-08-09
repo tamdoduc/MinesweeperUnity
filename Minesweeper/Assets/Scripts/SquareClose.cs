@@ -20,8 +20,14 @@ public class SquareClose : Square
     }
     void ChangeState()
     {
-        state++;
-        state %= 2;
+        if (state == 0 && gameManager.SetFlag())
+            state = 1;
+        else
+        if (state == 1)
+        {
+            gameManager.UnSetFlag();
+            state = 0;
+        }
 
         animator.SetInteger("state", state);
     }
