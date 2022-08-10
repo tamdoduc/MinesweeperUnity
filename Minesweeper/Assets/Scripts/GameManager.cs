@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviour
     private NumberTwoUnit countFlag;
     [SerializeField]
     private NumberTwoUnit maxBomb;
+    [SerializeField]
+    private Icon icon;
 
 
     private int[,] around = new int[,] {
@@ -48,6 +50,9 @@ public class GameManager : MonoBehaviour
         width = 20;
         arraySquareClose = new SquareClose[width, height];
         arraySquareOpen = new SquareOpen[width, height];
+        //PlayerPrefs.SetInt("highScore", 0);
+        if (PlayerPrefs.GetInt("highScore") != 0)
+            highScore.SetNumber(PlayerPrefs.GetInt("highScore"));
         Reset();
     }
 
@@ -117,13 +122,14 @@ public class GameManager : MonoBehaviour
         {
             int x = Random.Range(0, width);
             int y = Random.Range(0, height);
-            if (x != posExceptBomb.x && y != posExceptBomb.y)
+            if (x != posExceptBomb.x && y != posExceptBomb.y&& arraySquareOpen[x,y].GetCountBomb()!=-1)
             {
                 countBomb++;
                 arraySquareOpen[x, y].SetCountBomb(-1);
                 // Debug.Log(x + " " + y);
             }
         }
+        Debug.Log(countBomb);
     }
     public void OpenAround(Vector2Int posSquare)
     {
@@ -165,7 +171,11 @@ public class GameManager : MonoBehaviour
             SetStateSquareOpen();
         }
         if (countSquareOpened == height * width - numberOfBomb)
+        {
             Win();
+            return;
+        }
+       // Debug.Log(countSquareOpened+"/"+ (height * width - numberOfBomb));
         if (arraySquareOpen[posSquare.x, posSquare.y].GetCountBomb() == 0)
         {
             for (int k = 0; k < 8; k++)
@@ -177,11 +187,22 @@ public class GameManager : MonoBehaviour
 
     void Win()
     {
+        icon.Win();
+        timeBoard.Stop();
+        isGameOver = true;
 
+        Debug.Log("Win" + PlayerPrefs.GetInt("highScore")+"/"+timeBoard.GetValue());
+        if (timeBoard.GetValue()>PlayerPrefs.GetInt("highScore"))
+        {
+            PlayerPrefs.SetInt("highScore",timeBoard.GetValue());
+            highScore.SetNumber(PlayerPrefs.GetInt("highScore"));
+        }
     }
     void GameOver()
     {
         isGameOver = true;
+        timeBoard.Stop();
+        icon.GameOver();
         for (int i = 0; i < height; i++)
             for (int j = 0; j < width; j++)
             {
@@ -195,7 +216,7 @@ public class GameManager : MonoBehaviour
     }
     public bool SetFlag()
     {
-       if (countFlagSetted<numberOfBomb)
+       if (!isGameOver && countFlagSetted<numberOfBomb)
         {
             countFlagSetted++;
             countFlag.Increase();

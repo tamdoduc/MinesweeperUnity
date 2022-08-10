@@ -37,14 +37,12 @@ public class SquareClose : Square
         {
             if (state == 0)
             {
-                Debug.Log("This left");
                 gameManager.OpenSquare(posXY);
                 Open();
             }
         }
         if (Input.GetMouseButtonDown(1))
         {
-            Debug.Log("This Right");
             ChangeState();
         }
     }

@@ -977,6 +977,7 @@ MonoBehaviour:
   highScore: {fileID: 192868121}
   countFlag: {fileID: 816027525}
   maxBomb: {fileID: 91817687}
+  icon: {fileID: 298645949}
 --- !u!114 &1405978334 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1689916036411258777, guid: 3746d9cdf85e56d41ba2255a6e5604e5, type: 3}

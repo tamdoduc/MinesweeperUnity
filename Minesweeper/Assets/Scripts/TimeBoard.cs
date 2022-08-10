@@ -5,7 +5,6 @@ using UnityEngine;
 public class TimeBoard : NumberTwoUnit
 {
     // Start is called before the first frame update
-    private int value;
     private bool isBegin;
 
     private float time;
@@ -25,6 +24,9 @@ public class TimeBoard : NumberTwoUnit
                 time = time - 1f;
                 if (!Decrease())
                     isBegin = false;
+                else
+                    value--;
+                Debug.Log("Value: "+value);
             }
         }
     }
@@ -33,5 +35,11 @@ public class TimeBoard : NumberTwoUnit
         this.value = value;
         SetNumber(value);
         isBegin = true;
+    }
+    public void Stop()
+    {
+        isBegin = false;
+        Debug.Log("Value when Stop: "+value);
+        Debug.Log("Value when Stop: "+GetValue());
     }
 }

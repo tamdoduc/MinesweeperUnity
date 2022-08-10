@@ -8,7 +8,7 @@ public class NumberTwoUnit : MonoBehaviour
     protected Number number1;
     [SerializeField]
     protected Number number2;
-    private int value;
+    protected int value;
     void Start()
     {
         
